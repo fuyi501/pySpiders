@@ -6,6 +6,7 @@
 from bs4 import BeautifulSoup
 import re
 import urlparse
+import urllib
 
 class HtmlParser(object):
 

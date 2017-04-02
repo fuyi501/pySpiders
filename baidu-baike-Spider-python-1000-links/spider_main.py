@@ -7,6 +7,8 @@ import url_manager      # 导入 url管理器
 import html_downloader  # 导入 网页下载器
 import html_parser      # 导入 网页解析器
 import html_outputer    # 导入 数据输出器
+import urllib
+import sys
 
 class SpiderMain(object):
 
@@ -32,20 +34,21 @@ class SpiderMain(object):
             try:
                 # 从 urls 中获取一个未爬取的链接
                 new_url = self.urls.get_new_url()
-                # 输出抓取的 count ，以及 将要爬取的链接
-                print 'craw %d : %s' % (count, new_url)
+                # 输出抓取的 count ，以及 将要爬取的链接，并将链接中的中文也打印出来
+                print 'craw %d : %s' % (count, urllib.unquote(new_url.encode('utf-8')))
                 # 使用 downloader网页下载器下载新连接的网页内容
                 html_cont = self.downloader.download(new_url)
                 # 使用 parser解析器 解析网页中新的链接和要获取的数据并赋值给 new_urls, new_data
                 new_urls, new_data = self.parser.parse(new_url, html_cont)
                 # print new_urls,new_data # 打印 new_urls,new_data
+                #self.outputer.output_json_info(new_data)
                 # 将上一步从网页中解析出来的链接添加到 url管理器中
                 self.urls.add_new_urls(new_urls)
                 # 将上一步从网页中获取的数据交给 outputer数据输出器 收集数据并处理数据
                 self.outputer.collect_data(new_data)
 
                 #当 爬取的链接数达到 20 的时候停止，这个值可以根据需要更改
-                if count == 20: 
+                if count == 10: 
                     break
                 # 在while循环结束时 使链接计数器 自加一
                 count += 1
@@ -53,6 +56,8 @@ class SpiderMain(object):
                 print 'craw failed' # 发生异常时，输出 'craw failed'
         # 使用 outputer数据输出器 输出有用的数据到网页中
         self.outputer.output_html()
+
+        self.outputer.output_json()
 
 # main 函数
 if __name__ == "__main__":
