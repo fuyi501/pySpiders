@@ -1,5 +1,6 @@
-
 #coding:utf-8
+
+# python 2.7
 import urllib2
 import cookielib
 
